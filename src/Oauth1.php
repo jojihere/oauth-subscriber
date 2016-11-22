@@ -138,7 +138,11 @@ class Oauth1
         unset($params['oauth_signature']);
 
         // Add POST fields if the request uses POST fields and no files
-        if ($request->getHeaderLine('Content-Type') == 'application/x-www-form-urlencoded') {
+        $hashBody = true;
+        if(isset($this->config['hash_body']) && $this->config['hash_body'] === false)
+            $hashBody = false;
+
+        if ($request->getHeaderLine('Content-Type') == 'application/x-www-form-urlencoded' && $hashBody) {
             $body = \GuzzleHttp\Psr7\parse_query($request->getBody()->getContents());
             $params += $body;
         }
